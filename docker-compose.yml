@@ -31,6 +31,21 @@ services:
         depends_on:
             - django
             - redis
+    celery-beat:
+        build: .
+        container_name: celerybeat
+        command: celery -A core beat -l info
+        volumes:
+            - .:/usr/src/app
+        environment:
+            - DEBUG=1
+            - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+            - CELERY_BROKER=redis://redis:6379/0
+            - CELERY_BACKEND=redis://redis:6379/0
+        depends_on:
+            - django
+            - redis
+            - celery
     pgdb:
         image: postgres
         container_name: pgdb
